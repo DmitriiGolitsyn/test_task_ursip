@@ -3,6 +3,10 @@ from openpyxl import load_workbook
 
 
 def main():
+
+    table = get_table_from_excel('data.xlsx')
+
+
     workbook = load_workbook('data.xlsx', read_only=True, data_only=True)
 
     worksheet = workbook.active
