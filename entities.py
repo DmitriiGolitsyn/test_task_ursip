@@ -4,16 +4,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Entities:
-    pk: int
+    db_pk: int | None
 
     @classmethod
-    def db_name(cls):
+    def get_db_name(cls):
         return cls.__name__.lower()
 
 
 @dataclass
 class EntityNameMixin:
     name: str
+
+    def __str__(self):
+        return self.name
 
 
 @dataclass
@@ -37,36 +40,23 @@ class Datas(Entities, EntityNameMixin):
 
 
 @dataclass
-class Measurements(Entities):
-    date: datetime.date
-    company: Companies
-    fact_forecast: FactForecasts
+class FSDs(Entities):
+    fact_forecasts: FactForecasts
     substance: Substances
     data: Datas
-    quantity: float
+
+    def __str__(self):
+        return '_'.join((self.fact_forecasts.name, self.substance.name, self.data.name))
 
 
-# @dataclass
-# class Measure(Entities):
-#     fact_forecast: FactForecasts
-#     substance: Substances
-#     data: Datas
-#     quantity: float
-#
-#
-# @dataclass
-# class Measurements(Entities):
-#     date: datetime.date
-#     company: Companies
-#     day_measure: list[Measure]
+@dataclass
+class Measurements(Entities):
+    fsd: FSDs
+    quantity: float | None
 
 
-# c = Companies(pk=1, name='C1')
-# print(Companies.db_name())
-# print(c.name, c.pk)
-# print(Measurements.db_name())
-# print(type(Companies))
-# print(isinstance(c, Entities))
-# print(issubclass(Companies, Entities))
-# print(Companies.__mro__)
-
+@dataclass
+class DayMeasurements(Entities):
+    date: datetime.date
+    company: Companies
+    day_measurements: list[Measurements]
